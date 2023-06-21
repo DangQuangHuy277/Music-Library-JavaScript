@@ -1,10 +1,19 @@
 /* eslint-disable no-unused-vars */
+const { where } = require('sequelize');
 const { Album, Artist } = require('../models');
 const isUUID = require('../lib/uuid-validate');
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await Album.findAll();
+    const result = await Album.findAll({
+      include: [
+        {
+          model: Artist,
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
+
     res.status(200).json(result);
   } catch (error) {
     console.error(`Error in getAll Albums controller: ${error.message}`);
@@ -14,18 +23,26 @@ exports.getAll = async (req, res) => {
 exports.post = async (req, res) => {
   try {
     const newAlbum = req.body;
-    if (newAlbum.title == null || newAlbum.releaseDate == null || newAlbum.ArtistId == null) {
+    if (newAlbum.title == null || newAlbum.releaseDate == null || newAlbum.artist == null) {
       res.status(422).json({ error: 'title, releaseDate, ArtistId is required' });
     }
-    if (!isUUID(newAlbum.ArtistId)) {
-      res.status(422).json({ error: 'Invalid artist ID' });
-    }
+    // if (!isUUID(newAlbum.artist)) {
+    //   res.status(422).json({ error: 'Invalid artist ID' });
+    // }
 
-    const thisArtist = await Artist.findByPk(newAlbum.ArtistId);
+    const thisArtist = await Artist.findOne(
+      {
+        where: {
+          name: newAlbum.artist,
+        },
+      },
+    );
+    console.log(thisArtist);
     if (thisArtist == null) {
-      res.status(422).json({ error: 'This Artist of ArtistId doesn\'t exist in database' });
+      res.status(422).json({ error: 'This Artist doesn\'t exist in database' });
     }
 
+    newAlbum.ArtistId = thisArtist.id;
     const result = await Album.create(newAlbum);
     res.status(201).json(result);
   } catch (error) {
@@ -37,7 +54,17 @@ exports.getById = async (req, res) => {
   try {
     const ids = req.params.id;
     if (!isUUID(ids)) res.status(400).json({ error: 'Invalid album ID' });
-    const result = await Album.findByPk(ids);
+    const result = await Album.findByPk(
+      ids,
+      {
+        include: [
+          {
+            model: Artist,
+            attributes: ['id', 'name'],
+          },
+        ],
+      },
+    );
     if (result == null) res.status(404).json({ error: 'Album not found' });
     res.status(200).json(result);
   } catch (error) {
@@ -95,7 +122,18 @@ exports.getSongByAlbumId = async (req, res) => {
     }
     const result = await Album.findByPk(ids);
     if (result == null) res.status(404).json({ error: 'Album not found' });
-    const songs = await result.getSongs();
+    const songs = await result.getSongs({
+      include: [
+        {
+          model: Artist,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Album,
+          attributes: ['id', 'title'],
+        },
+      ],
+    });
     res.json(songs);
   } catch (error) {
     console.error(`Error in getAllByAlbumId Song controller: ${error.message}`);

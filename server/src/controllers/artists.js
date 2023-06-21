@@ -95,7 +95,18 @@ exports.getSongByArtistId = async (req, res) => {
     }
     const thisArtist = await Artist.findByPk(ids);
     if (thisArtist == null) res.status(404).json({ error: 'Artist not found' });
-    const songs = await thisArtist.getSongs();
+    const songs = await thisArtist.getSongs(
+      {
+        include: [{
+          model: Artist,
+          attributes: ['id', 'name'],
+        }, {
+          model: Album,
+          attributes: ['id', 'title'],
+        }],
+      },
+
+    );
     res.json(songs);
   } catch (error) {
     console.error(`Error in getAllByArtistId Song controller: ${error.message}`);

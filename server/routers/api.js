@@ -8,19 +8,19 @@ const router = express.Router();
 router.get('/songs', SongController.getAll);
 router.post('/songs', SongController.post);
 router.get('/songs/:id', SongController.getById);
-router.put('/songs/:id', SongController.updateById);
+router.patch('/songs/:id', SongController.updateById);
 router.delete('/songs/:id', SongController.deleteById);
 
 router.get('/albums', AlbumController.getAll);
 router.post('/albums', AlbumController.post);
 router.get('/albums/:id', AlbumController.getById);
-router.put('/albums/:id', AlbumController.updateById);
+router.patch('/albums/:id', AlbumController.updateById);
 router.delete('/albums/:id', AlbumController.deleteById);
 
 router.get('/artists', ArtistController.getAll);
 router.post('/artists', ArtistController.post);
 router.get('/artists/:id', ArtistController.getById);
-router.put('/artists/:id', ArtistController.updateById);
+router.patch('/artists/:id', ArtistController.updateById);
 router.delete('/artists/:id', ArtistController.deleteById);
 
 router.get('/artists/:id/albums', ArtistController.getAlbumByArtistId);

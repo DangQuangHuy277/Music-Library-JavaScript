@@ -8,7 +8,7 @@ module.exports = {
       'SELECT id FROM "Artist" WHERE name = \'Alan Walker\';',
     ))[0][0].id;
     console.log(alanId);
-    queryInterface.bulkInsert('Album', [{
+    await queryInterface.bulkInsert('Album', [{
       title: '99%',
       releaseDate: new Date(2023, 2, 2),
       link: 'https://open.spotify.com/album/1vi1WySkgPGkbR8NnQzlXu?si=QgCejz1FRruMRJuQGM2U3w',

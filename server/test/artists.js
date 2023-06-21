@@ -127,7 +127,7 @@ describe('Artists', () => {
     });
   });
 
-  describe('PUT /api/artists/:id', () => {
+  describe('PATCH /api/artists/:id', () => {
     let artist;
     before(async () => {
       artist = await Artist.create({
@@ -150,7 +150,7 @@ describe('Artists', () => {
         birthdate: '2000-01-01',
       };
       const res = await chai.request(app)
-        .put(`/api/artists/${artist.id}`).send(updatedArtist);
+        .patch(`/api/artists/${artist.id}`).send(updatedArtist);
 
       expect(res).to.have.status(200);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
@@ -161,7 +161,7 @@ describe('Artists', () => {
       expect(res.body.birthdate).to.equal(updatedArtist.birthdate);
     });
     it('Should return 400 error if id is not uuid', async () => {
-      const res = await chai.request(app).put('/api/artists/123');
+      const res = await chai.request(app).patch('/api/artists/123');
 
       expect(res).to.have.status(400);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
@@ -174,7 +174,7 @@ describe('Artists', () => {
         name: 'Updated Artist',
       };
       const res = await chai.request(app)
-        .put(`/api/artists/${artist.id}`).send({ updatedArtist });
+        .patch(`/api/artists/${artist.id}`).send({ updatedArtist });
 
       expect(res).to.have.status(422);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
@@ -335,6 +335,7 @@ describe('Artists', () => {
         },
       ]);
       await artist.addSongs(songs);
+      await songs.forEach((song) => song.addArtist(artist));
     });
     after(async () => {
       await Song.destroy({

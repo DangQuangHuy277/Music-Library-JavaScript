@@ -1,10 +1,21 @@
 /* eslint-disable consistent-return */
-const { Song } = require('../models');
+const { Song, Artist, Album } = require('../models');
 const isUUID = require('../lib/uuid-validate');
 
 exports.getAll = async (req, res) => {
   try {
-    const result = await Song.findAll();
+    const result = await Song.findAll({
+      include: [
+        {
+          model: Artist,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: Album,
+          attributes: ['id', 'title'],
+        },
+      ],
+    });
     res.json(result);
   } catch (error) {
     console.error(`Error in getAll song controller: ${error.message}`);
@@ -15,6 +26,57 @@ exports.post = async (req, res) => {
   try {
     const newSong = req.body;
     const result = await Song.create(newSong);
+    console.log(result);
+
+    const { artists } = req.body;
+    const artistsResult = await Artist.findAll({
+      where: {
+        name: artists,
+      },
+    });
+    if (artistsResult.length === 0) {
+      Song.destroy({
+        where: {
+          id: result.id,
+        },
+      });
+      await res.status(404).json({ error: 'Artist not found' });
+      return;
+    }
+    await result.addArtists(artistsResult);
+
+    const { album } = req.body;
+    if (album) {
+      const albumResult = await Album.findOne({
+        where: {
+          title: album,
+        },
+      });
+      if (albumResult == null) {
+        Song.destroy({
+          where: {
+            id: result.id,
+          },
+        });
+        await res.status(404).json({ error: 'Album not found' });
+        return;
+      }
+      const thisArtist = await albumResult.getArtist();
+      console.log(thisArtist);
+      console.log(artists);
+      if (artists.includes(thisArtist.name)) {
+        await albumResult.addSong(result);
+      } else {
+        Song.destroy({
+          where: {
+            id: result.id,
+          },
+        });
+        await res.status(404).json({ error: 'Album and Artist not match' });
+        return;
+      }
+    }
+
     res.status(201).json(result);
   } catch (error) {
     console.error(`Error in post Song controller: ${error.message}`);
