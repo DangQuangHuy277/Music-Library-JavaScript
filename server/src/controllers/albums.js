@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 const { where } = require('sequelize');
+const isUUID = require('validator/lib/isUUID');
 const { Album, Artist } = require('../models');
-const isUUID = require('../lib/uuid-validate');
 
 exports.getAll = async (req, res) => {
   try {
@@ -53,7 +53,7 @@ exports.post = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid album ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid album ID' });
     const result = await Album.findByPk(
       ids,
       {
@@ -76,7 +76,7 @@ exports.updateById = async (req, res) => {
   try {
     const ids = req.params.id;
     const updatedAlbum = req.body;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid album ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid album ID' });
     if (updatedAlbum.title == null
         || updatedAlbum.releaseDate == null
         || updatedAlbum.ArtistId == null) {
@@ -100,7 +100,7 @@ exports.updateById = async (req, res) => {
 exports.deleteById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid album ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid album ID' });
     const thisAlbum = await Album.findByPk(ids);
     if (thisAlbum == null) res.status(404).json({ error: 'Album not found' });
     await Album.destroy({
@@ -117,7 +117,7 @@ exports.deleteById = async (req, res) => {
 exports.getSongByAlbumId = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) {
+    if (!isUUID(ids, 4)) {
       res.status(400).json({ error: 'Invalid album ID' });
     }
     const result = await Album.findByPk(ids);

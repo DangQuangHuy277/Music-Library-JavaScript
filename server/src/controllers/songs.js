@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
+const isUUID = require('validator/lib/isUUID');
 const { Song, Artist, Album } = require('../models');
-const isUUID = require('../lib/uuid-validate');
 
 exports.getAll = async (req, res) => {
   try {
@@ -86,7 +86,7 @@ exports.post = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) {
+    if (!isUUID(ids, 4)) {
       return res.status(400).json({ error: 'Invalid song ID' });
     }
     const result = await Song.findOne({
@@ -105,7 +105,7 @@ exports.updateById = async (req, res) => {
   try {
     const ids = req.params.id;
     const updatedSong = req.body;
-    if (!isUUID(ids)) {
+    if (!isUUID(ids, 4)) {
       return res.status(400).json({ error: 'Invalid song ID' });
     }
 
@@ -136,7 +136,7 @@ exports.updateById = async (req, res) => {
 exports.deleteById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) {
+    if (!isUUID(ids, 4)) {
       res.status(400).json({ error: 'Invalid song ID' });
       return;
     }
@@ -159,7 +159,7 @@ exports.deleteById = async (req, res) => {
 exports.getArtistBySongId = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) {
+    if (!isUUID(ids, 4)) {
       res.status(400).json({ error: 'Invalid song ID' });
     }
     const thisSong = await Song.findByPk(ids);

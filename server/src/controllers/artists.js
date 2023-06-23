@@ -1,5 +1,5 @@
+const isUUID = require('validator/lib/isUUID');
 const { Artist, Album } = require('../models');
-const isUUID = require('../lib/uuid-validate');
 
 exports.getAll = async (req, res) => {
   try {
@@ -26,7 +26,7 @@ exports.post = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
     const result = await Artist.findByPk(ids);
     if (!result) res.status(404).json({ error: 'Artist not found' });
     res.status(200).json(result);
@@ -38,7 +38,7 @@ exports.getById = async (req, res) => {
 exports.updateById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
     const updatedArtist = req.body;
     if (!updatedArtist.name || !updatedArtist.gender || !updatedArtist.birthdate) {
       res.status(422).json({ error: 'Missing not null property' });
@@ -59,7 +59,7 @@ exports.updateById = async (req, res) => {
 exports.deleteById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
     const thisArtist = await Artist.findByPk(ids);
     if (!thisArtist) res.status(404).json({ error: 'Artist not found' });
     await Artist.destroy({ where: { id: ids } });
@@ -72,7 +72,7 @@ exports.deleteById = async (req, res) => {
 exports.getAlbumByArtistId = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
     const thisArtist = await Artist.findByPk(ids);
     if (thisArtist == null) res.status(404).json({ error: 'Artist not found' });
 
@@ -90,7 +90,7 @@ exports.getAlbumByArtistId = async (req, res) => {
 exports.getSongByArtistId = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids)) {
+    if (!isUUID(ids, 4)) {
       res.status(400).json({ error: 'Invalid Artist ID' });
     }
     const thisArtist = await Artist.findByPk(ids);

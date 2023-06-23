@@ -65,7 +65,7 @@ describe('Albums', () => {
   //       title: 'Test Album',
   //       releaseDate: new Date(),
   //       link: 'https://example.com/album',
-        
+  //       ArtistId: artist.id,
   //     };
 
   //     const res = await chai.request(app).post('/api/albums').send(newAlbum);
