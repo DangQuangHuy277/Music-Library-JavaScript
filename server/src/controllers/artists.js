@@ -14,7 +14,7 @@ exports.post = async (req, res) => {
   try {
     const newArtist = req.body;
     if (!newArtist.name || !newArtist.gender || !newArtist.birthdate) {
-      res.status(422).json({ error: 'Missing not null property' });
+      res.status(422).json({ message: 'Missing not null property' });
     }
     const result = await Artist.create(newArtist);
     res.status(201).json(result);
@@ -26,9 +26,9 @@ exports.post = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid Artist ID' });
     const result = await Artist.findByPk(ids);
-    if (!result) res.status(404).json({ error: 'Artist not found' });
+    if (!result) res.status(404).json({ message: 'Artist not found' });
     res.status(200).json(result);
   } catch (error) {
     console.error(`Error in getById Artist controller: ${error.message}`);
@@ -38,13 +38,13 @@ exports.getById = async (req, res) => {
 exports.updateById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid Artist ID' });
     const updatedArtist = req.body;
     if (!updatedArtist.name || !updatedArtist.gender || !updatedArtist.birthdate) {
-      res.status(422).json({ error: 'Missing not null property' });
+      res.status(422).json({ message: 'Missing not null property' });
     }
     const thisArtist = await Artist.findByPk(ids);
-    if (!thisArtist) res.status(404).json({ error: 'Artist not found' });
+    if (!thisArtist) res.status(404).json({ message: 'Artist not found' });
     // eslint-disable-next-line no-unused-vars
     const [_, result] = await Artist.update(updatedArtist, {
       where: { id: ids },
@@ -59,9 +59,9 @@ exports.updateById = async (req, res) => {
 exports.deleteById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid Artist ID' });
     const thisArtist = await Artist.findByPk(ids);
-    if (!thisArtist) res.status(404).json({ error: 'Artist not found' });
+    if (!thisArtist) res.status(404).json({ message: 'Artist not found' });
     await Artist.destroy({ where: { id: ids } });
     res.status(204).end();
   } catch (error) {
@@ -72,9 +72,9 @@ exports.deleteById = async (req, res) => {
 exports.getAlbumByArtistId = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid Artist ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid Artist ID' });
     const thisArtist = await Artist.findByPk(ids);
-    if (thisArtist == null) res.status(404).json({ error: 'Artist not found' });
+    if (thisArtist == null) res.status(404).json({ message: 'Artist not found' });
 
     const result = await Album.findAll({
       where: {
@@ -91,10 +91,10 @@ exports.getSongByArtistId = async (req, res) => {
   try {
     const ids = req.params.id;
     if (!isUUID(ids, 4)) {
-      res.status(400).json({ error: 'Invalid Artist ID' });
+      res.status(400).json({ message: 'Invalid Artist ID' });
     }
     const thisArtist = await Artist.findByPk(ids);
-    if (thisArtist == null) res.status(404).json({ error: 'Artist not found' });
+    if (thisArtist == null) res.status(404).json({ message: 'Artist not found' });
     const songs = await thisArtist.getSongs(
       {
         include: [{

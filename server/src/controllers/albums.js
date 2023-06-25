@@ -24,10 +24,10 @@ exports.post = async (req, res) => {
   try {
     const newAlbum = req.body;
     if (newAlbum.title == null || newAlbum.releaseDate == null || newAlbum.artist == null) {
-      res.status(422).json({ error: 'title, releaseDate, ArtistId is required' });
+      res.status(422).json({ message: 'title, releaseDate, ArtistId is required' });
     }
     // if (!isUUID(newAlbum.artist)) {
-    //   res.status(422).json({ error: 'Invalid artist ID' });
+    //   res.status(422).json({ message: 'Invalid artist ID' });
     // }
 
     const thisArtist = await Artist.findOne(
@@ -39,7 +39,7 @@ exports.post = async (req, res) => {
     );
     console.log(thisArtist);
     if (thisArtist == null) {
-      res.status(422).json({ error: 'This Artist doesn\'t exist in database' });
+      res.status(422).json({ message: 'This Artist doesn\'t exist in database' });
     }
 
     newAlbum.ArtistId = thisArtist.id;
@@ -53,7 +53,7 @@ exports.post = async (req, res) => {
 exports.getById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid album ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid album ID' });
     const result = await Album.findByPk(
       ids,
       {
@@ -65,7 +65,7 @@ exports.getById = async (req, res) => {
         ],
       },
     );
-    if (result == null) res.status(404).json({ error: 'Album not found' });
+    if (result == null) res.status(404).json({ message: 'Album not found' });
     res.status(200).json(result);
   } catch (error) {
     console.error(`Error in getById Albums controller: ${error.message}`);
@@ -76,14 +76,14 @@ exports.updateById = async (req, res) => {
   try {
     const ids = req.params.id;
     const updatedAlbum = req.body;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid album ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid album ID' });
     if (updatedAlbum.title == null
         || updatedAlbum.releaseDate == null
         || updatedAlbum.ArtistId == null) {
-      res.status(422).json({ error: 'title, releaseDate, ArtistId is required' });
+      res.status(422).json({ message: 'title, releaseDate, ArtistId is required' });
     }
     const thisAlbum = await Album.findByPk(ids);
-    if (thisAlbum == null) res.status(404).json({ error: 'Album not found' });
+    if (thisAlbum == null) res.status(404).json({ message: 'Album not found' });
 
     const [_, result] = await Album.update(updatedAlbum, {
       where: {
@@ -100,9 +100,9 @@ exports.updateById = async (req, res) => {
 exports.deleteById = async (req, res) => {
   try {
     const ids = req.params.id;
-    if (!isUUID(ids, 4)) res.status(400).json({ error: 'Invalid album ID' });
+    if (!isUUID(ids, 4)) res.status(400).json({ message: 'Invalid album ID' });
     const thisAlbum = await Album.findByPk(ids);
-    if (thisAlbum == null) res.status(404).json({ error: 'Album not found' });
+    if (thisAlbum == null) res.status(404).json({ message: 'Album not found' });
     await Album.destroy({
       where: {
         id: ids,
@@ -118,10 +118,10 @@ exports.getSongByAlbumId = async (req, res) => {
   try {
     const ids = req.params.id;
     if (!isUUID(ids, 4)) {
-      res.status(400).json({ error: 'Invalid album ID' });
+      res.status(400).json({ message: 'Invalid album ID' });
     }
     const result = await Album.findByPk(ids);
-    if (result == null) res.status(404).json({ error: 'Album not found' });
+    if (result == null) res.status(404).json({ message: 'Album not found' });
     const songs = await result.getSongs({
       include: [
         {
