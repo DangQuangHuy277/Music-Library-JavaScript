@@ -26,7 +26,6 @@ exports.post = async (req, res) => {
   try {
     const newSong = req.body;
     const result = await Song.create(newSong);
-    console.log(result);
 
     const { artists } = req.body;
     const artistsResult = await Artist.findAll({
@@ -62,8 +61,6 @@ exports.post = async (req, res) => {
         return;
       }
       const thisArtist = await albumResult.getArtist();
-      console.log(thisArtist);
-      console.log(artists);
       if (artists.includes(thisArtist.name)) {
         await albumResult.addSong(result);
       } else {

@@ -13,4 +13,5 @@ rules: {
     off,
   import/no-extraneous-dependencies:
     off
+  
 }

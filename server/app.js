@@ -5,7 +5,9 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 const app = express();
-const apiRouter = require('./routers/api');
+const dataApiRouter = require('./src/routers');
+const userApiRouter = require('./src/routers/users');
+const authenticate = require('./src/middlewares/authenticate');
 
 // log each request to console
 app.use(morgan('dev'));
@@ -16,7 +18,9 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/api', apiRouter);
+app.use('/api/users', userApiRouter);
+
+app.use('/api', authenticate, dataApiRouter);
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Nothing to see here' });
