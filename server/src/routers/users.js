@@ -12,7 +12,8 @@ router.post('/register', async (req, res) => {
   try {
     // Validate the request body
     const { error } = registerValidation(req.body);
-    if (error) return res.status(400).json({ error });
+    console.log(error.message);
+    if (error) return res.status(400).json({ message: error.message });
 
     const { username, email, password } = req.body;
 
@@ -44,7 +45,7 @@ router.post('/login', async (req, res) => {
   try {
     // Validate the request body
     const { error } = loginValidation(req.body);
-    if (error) return res.status(400).json({ error });
+    if (error) return res.status(400).json({ message: error.message });
 
     const { email, password } = req.body;
 
