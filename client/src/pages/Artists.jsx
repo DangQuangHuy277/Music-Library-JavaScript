@@ -11,8 +11,16 @@ export default function ArtistPage() {
     useEffect(() => {
         let isMounted = true;
         async function fetchArtists() {
-            const response = await fetch("http://localhost:8000/api/artists");
-            const data = await response.json();
+            const res = await fetch("http://localhost:8000/api/artists", {
+                headers: {
+                    "Authorization": localStorage.getItem("token"),
+                },
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.message);
+                return;
+            }
             if (isMounted) setArtists(data);
         }
         fetchArtists();
@@ -24,20 +32,34 @@ export default function ArtistPage() {
     };
 
     const handleDelete = async (id) => {
-        await fetch(`http://localhost:8000/api/artists/${id}`, {
+        const res = await fetch(`http://localhost:8000/api/artists/${id}`, {
             method: "DELETE",
+            headers: {
+                "Authorization": localStorage.getItem("token"),
+            },
         });
+        if (!res.ok) {
+            const message = await res.json();
+            alert(message.message);
+            return;
+        }
         setArtists((prevArtists) => prevArtists.filter((artist) => artist.id !== id));
     };
 
     const handleUpdate = async (id, name, gender, birthdate, nationality) => {
-        await fetch(`http://localhost:8000/api/artists/${id}`, {
+        const res = await fetch(`http://localhost:8000/api/artists/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token"),
             },
             body: JSON.stringify({ id, name, gender, birthdate, nationality }),
         });
+        if (!res.ok) {
+            const message = await res.json();
+            alert(message.message);
+            return;
+        }
         setArtists((prevArtists) => prevArtists.map((artist) => {
             if (artist.id === id) {
                 return { ...artist, id, name, gender, birthdate, nationality };

@@ -38,13 +38,14 @@ export default function AddArtisitModal({ open, onClose, onSave }) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token"),
             },
             body: JSON.stringify({ name, gender, birthdate, nationality }),
         });
-        const message = await res.json();
-
-        if (res.status != 201) {
-            setError(message.error)
+        
+        if (!res.ok) {
+            const message = await res.json();
+            setError(message.message)
             return;
         }
         onSave();

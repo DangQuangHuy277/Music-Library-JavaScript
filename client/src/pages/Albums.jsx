@@ -14,7 +14,11 @@ function Albums() {
     useEffect(() => {
         let isMounted = true;
         async function fetchAlbums() {
-            const response = await fetch(baseURL + '/albums');
+            const response = await fetch(baseURL + '/albums', {
+                headers: {
+                    'Authorization': localStorage.getItem('token'),
+                }
+            });
             const data = await response.json();
             if (isMounted) setAlbums(data);
         }
@@ -23,20 +27,34 @@ function Albums() {
     }, [isAdding]);
 
     const handleDeleteAlbum = async (id) => {
-        await fetch(baseURL + `/albums/${id}`, {
-            method: 'DELETE'
+        const res = await fetch(baseURL + `/albums/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': localStorage.getItem('token'),
+            }
         });
+        if(!res.ok) {
+            const message = await res.json();
+            alert(message.message);
+            return;
+        }
         setAlbums((prevAlbums) => prevAlbums.filter((album) => album.id !== id));
     };
 
     const handleUpdateAlbum = async (id, title, releaseDate) => {
-        await fetch(baseURL + `/albums/${id}`, {
+        const res = await fetch(baseURL + `/albums/${id}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('token'),
             },
             body: JSON.stringify({ title, releaseDate })
         });
+        if(!res.ok) {
+            const message = await res.json();
+            alert(message.message);
+            return;
+        }
         setAlbums((prevAlbums) => prevAlbums.map((album) => {
             if (album.id === id) {
                 return { ...album, title, releaseDate };

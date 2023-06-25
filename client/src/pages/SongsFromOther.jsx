@@ -18,8 +18,16 @@ export default function SongsFromOther({ source }) {
     useEffect(() => {
         let isMounted = true;
         async function fetchSongs() {
-            const response = await fetch(dataLink);
+            const response = await fetch(dataLink, {
+                headers: {
+                    "Authorization": localStorage.getItem("token"),
+                },
+            });
             const data = await response.json();
+            if (!data.ok) {
+                alert(data.message);
+                return;
+            }
             if (isMounted) {
                 data.forEach((song) => {
                     song.duration = new Date(song.duration * 1000).toISOString().slice(14, 19);
@@ -34,8 +42,16 @@ export default function SongsFromOther({ source }) {
     useEffect(() => {
         let isMounted = true;
         async function fetchAlbums() {
-            const response = await fetch(link);
+            const response = await fetch(link, {
+                headers: {
+                    "Authorization": localStorage.getItem("token"),
+                },
+            });
             const data = await response.json();
+            if (!data.ok) {
+                alert(data.message);
+                return;
+            }
             if (isMounted) {
                 if (source == 'album') {
                     document.title = data.title;
@@ -51,9 +67,17 @@ export default function SongsFromOther({ source }) {
 
 
     const handleDelete = async (id) => {
-        await fetch(`http://localhost:8000/api/songs/${id}`, {
+        const res = await fetch(`http://localhost:8000/api/songs/${id}`, {
             method: "DELETE",
+            headers: {
+                "Authorization": localStorage.getItem("token"),
+            },
         });
+        const message = await res.json();
+        if (!res.ok) {
+            alert(message.message);
+            return;
+        }
         setSongs((prevSongs) => prevSongs.filter((song) => song.id !== id));
     };
 
@@ -62,13 +86,19 @@ export default function SongsFromOther({ source }) {
         const [min, sec] = duration.split(":").map((str) => parseInt(str));
         duration = min * 60 + sec;
 
-        await fetch(`http://localhost:8000/api/songs/${id}`, {
+        const res = await fetch(`http://localhost:8000/api/songs/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token"),
             },
             body: JSON.stringify({ title, duration }),
         });
+        const message = await res.json();
+        if (!res.ok) {
+            alert(message.message);
+            return;
+        }
         setSongs((prevSongs) =>
             prevSongs.map((song) => {
                 if (song.id === id) {

@@ -12,7 +12,6 @@ router.post('/register', async (req, res) => {
   try {
     // Validate the request body
     const { error } = registerValidation(req.body);
-    console.log(error.message);
     if (error) return res.status(400).json({ message: error.message });
 
     const { username, email, password } = req.body;
@@ -37,7 +36,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ message: 'User created successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.log(err);
   }
 });
 
@@ -74,7 +73,7 @@ router.post('/login', async (req, res) => {
       },
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, username: user.username });
   } catch (err) {
     console.log(err);
   }

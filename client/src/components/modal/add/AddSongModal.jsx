@@ -44,18 +44,19 @@ export default function AddSongModal({ open, onClose, onSave }) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token")
             },
             body: JSON.stringify({ title, duration: min * 60 + sec, artists: artistList, album: album.trim() }),
         });
-        const message = await res.json();
 
         // if(/^[a-zA-Z0-9 ]*$/.test(album) === false){
         //     setError("Album must be in format: album");
         //     return;
         // }
-        if (res.status != 201) {
+        if (!res.ok) {
+            const message = await res.json();
             console.log(message)
-            setError(message.error)
+            setError(message.message)
             return;
         }
         onSave();

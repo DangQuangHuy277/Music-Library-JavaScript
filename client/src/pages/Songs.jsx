@@ -12,7 +12,11 @@ export default function SongsFromAlbum() {
     useEffect(() => {
         let isMounted = true;
         async function fetchSongs() {
-            const response = await fetch("http://localhost:8000/api/songs");
+            const response = await fetch("http://localhost:8000/api/songs",{
+                headers: {
+                    "Authorization": localStorage.getItem("token"),
+                },
+            });
             const data = await response.json();
             if (isMounted) {
                 data.forEach((song) => {
@@ -26,9 +30,17 @@ export default function SongsFromAlbum() {
     }, [isAdding]);
 
     const handleDelete = async (id) => {
-        await fetch(`http://localhost:8000/api/songs/${id}`, {
+        const res = await fetch(`http://localhost:8000/api/songs/${id}`, {
             method: "DELETE",
+            headers: {
+                "Authorization": localStorage.getItem("token"),
+            },
         });
+        if (!res.ok) {
+            const message = await res.json();
+            alert(message.message);
+            return;
+        }
         setSongs((prevSongs) => prevSongs.filter((song) => song.id !== id));
     };
 
@@ -37,13 +49,19 @@ export default function SongsFromAlbum() {
         const [min, sec] = duration.split(":").map((str) => parseInt(str));
         duration = min * 60 + sec;
 
-        await fetch(`http://localhost:8000/api/songs/${id}`, {
+        const res = await fetch(`http://localhost:8000/api/songs/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("token"),
             },
             body: JSON.stringify({ title, duration }),
         });
+        if (!res.ok) {
+            const message = await res.json();
+            alert(message.message);
+            return;
+        }
         setSongs((prevSongs) =>
             prevSongs.map((song) => {
                 if (song.id === id) {
