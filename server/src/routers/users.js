@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
   try {
     // Validate the request body
     const { error } = registerValidation(req.body);
-    if (error) return res.status(400).json({ message: error });
+    if (error) return res.status(400).json({ error });
 
     const { username, email, password } = req.body;
 
@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
         email,
       },
     });
-    if (user) return res.status(400).json({ message: 'Email already exists' });
+    if (user) return res.status(400).json({ error: 'Email already exists' });
 
     // hash password
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ message: 'User created successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
   try {
     // Validate the request body
     const { error } = loginValidation(req.body);
-    if (error) return res.status(400).json({ message: error });
+    if (error) return res.status(400).json({ error });
 
     const { email, password } = req.body;
 
@@ -55,11 +55,11 @@ router.post('/login', async (req, res) => {
       },
     });
 
-    if (!user) return res.status(400).json({ message: 'Account is not exist' });
+    if (!user) return res.status(400).json({ error: 'Account is not exist' });
 
     // Check if password is correct
     const checkPass = await bcrypt.compare(password, user.password);
-    if (!checkPass) return res.status(400).json({ message: 'Password is incorrect' });
+    if (!checkPass) return res.status(400).json({ error: 'Password is incorrect' });
 
     // Create and assign a token
     const token = jwt.sign(
