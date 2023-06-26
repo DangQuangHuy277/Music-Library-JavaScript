@@ -59,7 +59,6 @@ Note that all API URL have format: `/api/Endpoint`
 | GET | /songs/\:id/artist | Return list songs of a specific artist |
 
 ## Testing
-
-- Run ```yarn run test``` or ```NODE_ENV=test mocha``` (or ```mocha``` to test direct on the development environment) to run unit test
 - Run ```yarn run start:dev``` to run server -> Test by request from Postman or https://hoppscotch.io/
+- Note: Unit test only use after turning off authentication and authorization to test each API function only
 
