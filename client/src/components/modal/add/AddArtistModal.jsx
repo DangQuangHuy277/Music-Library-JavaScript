@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal } from "@mui/material"
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function AddArtisitModal({ open, onClose, onSave }) {
     const [error, setError] = useState(null);
@@ -34,7 +35,7 @@ export default function AddArtisitModal({ open, onClose, onSave }) {
             return;
         }
 
-        const res = await fetch("http://localhost:8000/api/artists", {
+        const res = await fetch(`${apiBaseUrl}/artists`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

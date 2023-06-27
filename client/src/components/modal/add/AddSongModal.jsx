@@ -1,5 +1,6 @@
 import { Modal } from "@mui/material";
 import { useState } from "react";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export default function AddSongModal({ open, onClose, onSave }) {
     const [error, setError] = useState(null);
     const [title, setTitle] = useState("");
@@ -40,7 +41,7 @@ export default function AddSongModal({ open, onClose, onSave }) {
         }
 
         const artistList = artists.split(",").map((artist) => artist.trim());
-        const res = await fetch("http://localhost:8000/api/songs", {
+        const res = await fetch(`${apiBaseUrl}/songs`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

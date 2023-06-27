@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ArtistBar from "../components/bar/ArtistBar";
 import Sidebar from "../components/Sidebar";
 import AddArtistModal from "../components/modal/add/AddArtistModal";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function ArtistPage() {
     const [isAdding, setIsAdding] = useState(false);
@@ -11,7 +12,7 @@ export default function ArtistPage() {
     useEffect(() => {
         let isMounted = true;
         async function fetchArtists() {
-            const res = await fetch("http://localhost:8000/api/artists", {
+            const res = await fetch(`${apiBaseUrl}/artists`, {
                 headers: {
                     "Authorization": localStorage.getItem("token"),
                 },
@@ -32,7 +33,7 @@ export default function ArtistPage() {
     };
 
     const handleDelete = async (id) => {
-        const res = await fetch(`http://localhost:8000/api/artists/${id}`, {
+        const res = await fetch(`${apiBaseUrl}/artists/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": localStorage.getItem("token"),
@@ -47,7 +48,7 @@ export default function ArtistPage() {
     };
 
     const handleUpdate = async (id, name, gender, birthdate, nationality) => {
-        const res = await fetch(`http://localhost:8000/api/artists/${id}`, {
+        const res = await fetch(`${apiBaseUrl}/artists/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

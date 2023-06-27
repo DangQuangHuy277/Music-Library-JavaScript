@@ -1,4 +1,6 @@
 import { useState } from "react"
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export default function Register() {
     const [error, setError] = useState();
     const [username, setUsername] = useState('');
@@ -13,7 +15,7 @@ export default function Register() {
             return;
         }
         try {
-            const res = await fetch('http://localhost:8000/api/users/register', {
+            const res = await fetch(`${apiBaseUrl}/users/register`, {
                 method: 'POST',
                 body: JSON.stringify({ username, email, password }),
                 headers: { 'Content-Type': 'application/json' }

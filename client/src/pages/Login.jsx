@@ -1,4 +1,6 @@
 import { useState } from "react";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 function Login() {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState('');
@@ -7,7 +9,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:8000/api/users/login', {
+            const res = await fetch(apiBaseUrl + '/users/login', {
                 method: 'POST',
                 body: JSON.stringify({ email, password }),
                 headers: { 'Content-Type': 'application/json' }

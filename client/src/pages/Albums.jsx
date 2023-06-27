@@ -3,8 +3,7 @@ import Sidebar from "../components/Sidebar";
 import AlbumBar from "../components/bar/AlbumBar";
 
 import AddAlbumModal from "../components/modal/add/AddAlbumModal";
-
-const baseURL = "http://localhost:8000/api";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Albums() {
     const [isAdding, setIsAdding] = useState(false);
@@ -14,7 +13,7 @@ function Albums() {
     useEffect(() => {
         let isMounted = true;
         async function fetchAlbums() {
-            const response = await fetch(baseURL + '/albums', {
+            const response = await fetch(`${apiBaseUrl}/albums`, {
                 headers: {
                     'Authorization': localStorage.getItem('token'),
                 }
@@ -27,7 +26,7 @@ function Albums() {
     }, [isAdding]);
 
     const handleDeleteAlbum = async (id) => {
-        const res = await fetch(baseURL + `/albums/${id}`, {
+        const res = await fetch(`${apiBaseUrl}/albums/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': localStorage.getItem('token'),
@@ -42,7 +41,7 @@ function Albums() {
     };
 
     const handleUpdateAlbum = async (id, title, releaseDate) => {
-        const res = await fetch(baseURL + `/albums/${id}`, {
+        const res = await fetch(`${apiBaseUrl}/albums/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

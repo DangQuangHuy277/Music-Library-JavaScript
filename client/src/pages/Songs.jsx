@@ -1,4 +1,5 @@
 import Sidebar from "../components/Sidebar";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 import { useEffect, useState } from "react";
 import SongBar from "../components/bar/SongBar";
@@ -12,7 +13,7 @@ export default function SongsFromAlbum() {
     useEffect(() => {
         let isMounted = true;
         async function fetchSongs() {
-            const response = await fetch("http://localhost:8000/api/songs",{
+            const response = await fetch(`${apiBaseUrl}/songs`,{
                 headers: {
                     "Authorization": localStorage.getItem("token"),
                 },
@@ -30,7 +31,7 @@ export default function SongsFromAlbum() {
     }, [isAdding]);
 
     const handleDelete = async (id) => {
-        const res = await fetch(`http://localhost:8000/api/songs/${id}`, {
+        const res = await fetch(`${apiBaseUrl}/songs/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": localStorage.getItem("token"),
@@ -49,7 +50,7 @@ export default function SongsFromAlbum() {
         const [min, sec] = duration.split(":").map((str) => parseInt(str));
         duration = min * 60 + sec;
 
-        const res = await fetch(`http://localhost:8000/api/songs/${id}`, {
+        const res = await fetch(`${apiBaseUrl}/songs/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
