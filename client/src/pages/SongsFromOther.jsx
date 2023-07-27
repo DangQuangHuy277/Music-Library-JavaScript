@@ -11,7 +11,7 @@ export default function SongsFromOther({ source }) {
     const [artistName, setArtistName] = useState("");
 
     const link = ((source === "album") ?
-        apiBaseUrl + "albums/" : apiBaseUrl + "artists/")
+        apiBaseUrl + "/albums/" : apiBaseUrl + "/artists/")
         + id;
 
     const dataLink = link + "/songs";
@@ -25,7 +25,7 @@ export default function SongsFromOther({ source }) {
                 },
             });
             const data = await response.json();
-            if (!data.ok) {
+            if (!response.ok) {
                 alert(data.message);
                 return;
             }
@@ -49,7 +49,7 @@ export default function SongsFromOther({ source }) {
                 },
             });
             const data = await response.json();
-            if (!data.ok) {
+            if (!response.ok) {
                 alert(data.message);
                 return;
             }
